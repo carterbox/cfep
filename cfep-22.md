@@ -89,11 +89,13 @@ outputs:
       - {{ pin_subpackage("libavif" ~ soname, max_pin=None) }}
   requirements:
     run:
-      - {{ pin_subpackage("libavif" ~ soname, exact=True) }}
-      - {{ pin_subpackage("libavif", exact=True) }}
+      - {{ pin_subpackage("libavif" ~ soname, exact=True) }}  # [unix]
+      - {{ pin_subpackage("libavif", exact=True) }}           # [unix]
   files:
-    - lib/libavif.so
-    - include/foo.h
+    - lib/libavif.so  # [linux]
+    - include/avif.h  # [unix]
+    - Library/lib/avif.lib    # [win]
+    - Library/include/avif.h  # [win]
 
 # This package acts a mutex. It prevents multiple libavif ABIs from being installed
 # simultaneously. It may be excluded, but in most conda environments only one ABI of a
@@ -112,15 +114,17 @@ outputs:
       - dav1d-dev
       - ravie-dev
   files:
-    - lib/libavif.so.{{ soname }}
-    - lib/libavif.so.{{ soversion }}
+    - lib/libavif.so.{{ soname }}     # [linux]
+    - lib/libavif.so.{{ soversion }}  # [linux]
+    - Library/bin/avif-{{ soname }}.dll  # [win]
 
 - name: libavif-static
   requirements:
     run:
       - {{ pin_subpackage("libavif-dev", exact=True) }}
   files:
-    - lib/libavif.a
+    - lib/libavif.a  # [unix]
+    - Library/lib/avif_static.lib  # [win]
 ```
 
 When ABI compatability is unknown or API and ABI are versioned together:
